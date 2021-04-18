@@ -81,7 +81,29 @@ namespace map_utils
 
         case status::Goal:
             return "G";
+
+        case status::Path:
+            return "*";
         }
+    }
+
+    std::vector<int> getCoordinates(const std::vector<std::vector<status>>& map, const status& state)
+    {
+        std::vector<int> coords;
+
+        for(unsigned i = 0; i < map.size(); i++)
+        {
+            for(unsigned j = 0; j < map[i].size(); j++)
+            {
+                if(map[i][j] == state)
+                {
+                    coords.push_back(i); // vertical
+                    coords.push_back(j); // horizontal
+                }
+            }
+        }
+
+        return coords;
     }
 
 } // end map_utils namespace
