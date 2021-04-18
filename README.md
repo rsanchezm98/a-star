@@ -1,2 +1,2 @@
-# a-star
-C++ implementation of A* algorithm
+# A* algorithm
+C++ implementation of A* path planning algorithm
