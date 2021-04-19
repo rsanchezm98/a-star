@@ -5,7 +5,7 @@
 int main()
 {
     /* Goal map */
-    std::string filename("../maps/map_2.txt");
+    std::string filename("../maps/map.txt");
     std::vector<std::vector<map_utils::status>> map = map_utils::readMap(filename);
     std::cout << "[main_info]: Initial map --> " << std::endl;
     map_utils::displayMap(map);

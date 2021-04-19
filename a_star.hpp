@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <utility> //std::pair
+#include <chrono>
 
 namespace a_star
 {

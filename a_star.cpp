@@ -5,6 +5,8 @@ namespace a_star
     std::pair<std::vector<std::vector<map_utils::status>>, std::vector<std::vector<int>>> searchPath(
         std::vector<std::vector<map_utils::status>> map)
     {
+        auto initTime = std::chrono::high_resolution_clock::now();
+
         std::vector<int> initCoords = map_utils::getCoordinates(map, map_utils::status::Init);
         std::vector<int> goalCoords = map_utils::getCoordinates(map, map_utils::status::Goal);
 
@@ -40,14 +42,17 @@ namespace a_star
             // check if we reached the goal
             if(current_node.horizontal == goalCoords[1] && current_node.vertical == goalCoords[0])
             {
-                // we need to update the map so as to put the init and goal status in the map
-                // as they have been removed by the algorith
+                auto finTime = std::chrono::high_resolution_clock::now();
+                auto duration_ = std::chrono::duration_cast<std::chrono::nanoseconds>(finTime - initTime);
+
+                
                 std::vector<std::vector<int>> path = buildPath(map, evaluated_nodes, goalCoords);
                 map[initCoords[0]][initCoords[1]] = map_utils::status::Init;
                 map[goalCoords[0]][goalCoords[1]] = map_utils::status::Goal;
 
                 std::cout << "[a_star_info]: Found the shortest path!" << std::endl;
-
+                std::cout << "[a_star_info]: Elapsed time: " << duration_.count()*1.0/1e6 << " ms" << std::endl;
+                 
                 solution.first = map;
                 solution.second = path;
                 return  solution; // return std::pair
