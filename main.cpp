@@ -7,14 +7,15 @@ int main()
     /* Goal map */
     std::string filename("../maps/map_2.txt");
     std::vector<std::vector<map_utils::status>> map = map_utils::readMap(filename);
-    std::cout << "Initial map: " << std::endl;
+    std::cout << "[main_info]: Initial map --> " << std::endl;
     map_utils::displayMap(map);
 
     /* Solution map */
-    std::vector<std::vector<map_utils::status>> solution = 
+    std::pair<std::vector<std::vector<map_utils::status>>, std::vector<std::vector<int>>> solution = 
         a_star::searchPath(map);
-    std::cout << "Solution map: " << std::endl;
-    map_utils::displayMap(solution);
+    std::cout << "[main_info]: Solution map --> " << std::endl;
+    map_utils::displayMap(solution.first);
+    map_utils::printPath(solution.second);
 
     return 0;
 }

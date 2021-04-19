@@ -84,6 +84,9 @@ namespace map_utils
 
         case status::Path:
             return "*";
+            
+        case status::Solution:
+            return "+";
         }
     }
 
@@ -104,6 +107,13 @@ namespace map_utils
         }
 
         return coords;
+    }
+
+    void printPath(std::vector<std::vector<int>>& path)
+    {
+        std::cout << "[path_info]: The path takes #" << path.size() - 1 <<
+                            " steps to be completed" << std::endl;
+
     }
 
 } // end map_utils namespace

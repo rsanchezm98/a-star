@@ -5,10 +5,11 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include <utility> //std::pair
 
 namespace a_star
 {
-    std::vector<std::vector<map_utils::status>> searchPath(
+    std::pair<std::vector<std::vector<map_utils::status>>, std::vector<std::vector<int>>> searchPath(
         std::vector<std::vector<map_utils::status>> map);
 
     struct a_star_node
@@ -17,6 +18,7 @@ namespace a_star
         int vertical;
         int g;
         int h;
+        std::vector<int> parent;
     };
 
     int computeHeuristic(const std::vector<int>& goal, const std::vector<int>& node_coordinates);
@@ -29,9 +31,14 @@ namespace a_star
     
     bool compareRule(const a_star_node& a, const a_star_node& b);
 
-    void goWithNeighbours(const a_star_node& current_node, std::vector<int> goalCoords, 
+    void goWithNeighbours(a_star_node& current_node, std::vector<int> goalCoords, 
                         std::vector<a_star_node>& open, 
                         std::vector<std::vector<map_utils::status>>& map);
+
+    std::vector<std::vector<int>> buildPath(std::vector<std::vector<map_utils::status>>& map, 
+                    std::vector<a_star_node>& evaluated_nodes, std::vector<int>& goal);
+
+    int getNodePosition(std::vector<a_star_node>& evaluated_nodes, std::vector<int>& pos);
     
 
 } // end a_star namespace

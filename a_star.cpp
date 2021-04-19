@@ -2,14 +2,16 @@
 
 namespace a_star
 {
-    std::vector<std::vector<map_utils::status>> searchPath(
+    std::pair<std::vector<std::vector<map_utils::status>>, std::vector<std::vector<int>>> searchPath(
         std::vector<std::vector<map_utils::status>> map)
     {
-        bool solved = false;
         std::vector<int> initCoords = map_utils::getCoordinates(map, map_utils::status::Init);
         std::vector<int> goalCoords = map_utils::getCoordinates(map, map_utils::status::Goal);
 
+        std::pair<std::vector<std::vector<map_utils::status>>, std::vector<std::vector<int>>> solution;
+
         std::vector<a_star_node> open;
+        std::vector<a_star_node> evaluated_nodes;
 
         // first node
         a_star_node init_node;
@@ -27,6 +29,7 @@ namespace a_star
 
             // get the last element
             a_star_node current_node = open.back(); 
+            evaluated_nodes.push_back(current_node);
 
             // remove the current node
             open.pop_back(); 
@@ -39,12 +42,15 @@ namespace a_star
             {
                 // we need to update the map so as to put the init and goal status in the map
                 // as they have been removed by the algorith
+                std::vector<std::vector<int>> path = buildPath(map, evaluated_nodes, goalCoords);
                 map[initCoords[0]][initCoords[1]] = map_utils::status::Init;
                 map[goalCoords[0]][goalCoords[1]] = map_utils::status::Goal;
-                std::cout << "[a_star_stats]: Found the shortest path!" << std::endl;
-                std::cout << "[a_star_stats]: The shortest path takes #" << current_node.g <<
-                            " steps to be completed" << std::endl;
-                return map;
+
+                std::cout << "[a_star_info]: Found the shortest path!" << std::endl;
+
+                solution.first = map;
+                solution.second = path;
+                return  solution; // return std::pair
             }
 
             // check the neighbours and compute its components so as to add them to open list
@@ -53,9 +59,9 @@ namespace a_star
         }
 
         // if we get here it means that no solution was found
-        std::cout << "No solution was found" << std::endl;
-        std::vector<std::vector<map_utils::status>> emptyMap;
-        return emptyMap;
+        std::cout << "[a_star_info]: No solution was found!" << std::endl;
+
+        return solution;
         
     }
 
@@ -86,7 +92,7 @@ namespace a_star
         return f_first > f_second;
     }
 
-    void goWithNeighbours(const a_star_node& current_node, std::vector<int> goalCoords, 
+    void goWithNeighbours(a_star_node& current_node, std::vector<int> goalCoords, 
                         std::vector<a_star_node>& open, 
                         std::vector<std::vector<map_utils::status>>& map)
     {
@@ -110,6 +116,8 @@ namespace a_star
                 coords.push_back(up_node.vertical);
                 coords.push_back(up_node.horizontal);
                 up_node.h = computeHeuristic(goalCoords, coords);
+                up_node.parent.push_back(current_node.vertical);
+                up_node.parent.push_back(current_node.horizontal);
                 addToOpenList(up_node, map, open);
 
             }
@@ -130,6 +138,8 @@ namespace a_star
                 coords.push_back(down_node.vertical);
                 coords.push_back(down_node.horizontal);
                 down_node.h = computeHeuristic(goalCoords, coords);
+                down_node.parent.push_back(current_node.vertical);
+                down_node.parent.push_back(current_node.horizontal);
                 addToOpenList(down_node, map, open);
 
             }
@@ -150,6 +160,8 @@ namespace a_star
                 coords.push_back(left_node.vertical);
                 coords.push_back(left_node.horizontal);
                 left_node.h = computeHeuristic(goalCoords, coords);
+                left_node.parent.push_back(current_node.vertical);
+                left_node.parent.push_back(current_node.horizontal);
                 addToOpenList(left_node, map, open);
 
             }
@@ -170,8 +182,60 @@ namespace a_star
                 coords.push_back(right_node.vertical);
                 coords.push_back(right_node.horizontal);
                 right_node.h = computeHeuristic(goalCoords, coords);
+                right_node.parent.push_back(current_node.vertical);
+                right_node.parent.push_back(current_node.horizontal);
                 addToOpenList(right_node, map, open);
+            }
+        }
+    }
 
+    std::vector<std::vector<int>> buildPath(std::vector<std::vector<map_utils::status>>& map, 
+                    std::vector<a_star_node>& evaluated_nodes, std::vector<int>& goal)
+    {
+        auto index = getNodePosition(evaluated_nodes, goal);
+        std::vector<std::vector<int>> path;
+        
+        while(true) // to be in the Init position
+        {
+            std::vector<int> current;
+            auto x = evaluated_nodes[index].horizontal;
+            auto y = evaluated_nodes[index].vertical;
+
+            current.push_back(y);
+            current.push_back(x);
+
+            path.push_back(current);
+
+            map[y][x] = map_utils::status::Solution;
+
+            index = getNodePosition(evaluated_nodes, evaluated_nodes[index].parent);
+
+            if(index == 0)
+            {
+                std::vector<int> current_;
+                auto x_ = evaluated_nodes[index].horizontal;
+                auto y_ = evaluated_nodes[index].vertical;
+
+                current_.push_back(y);
+                current_.push_back(x);
+
+                path.push_back(current_);
+
+                return path;                
+            }
+        }
+
+        return path;
+    }
+
+    int getNodePosition(std::vector<a_star_node>& evaluated_nodes, std::vector<int>& pos)
+    {
+
+        for(unsigned i = 0; i < evaluated_nodes.size(); i++)
+        {
+            if(evaluated_nodes[i].vertical == pos[0] && evaluated_nodes[i].horizontal == pos[1])
+            {
+                return i;
             }
         }
     }

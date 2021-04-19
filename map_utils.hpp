@@ -9,7 +9,7 @@
 
 namespace map_utils
 {
-    enum class status {Init, Goal, Empty, Obstacle, Path, Closed};
+    enum class status {Init, Goal, Empty, Obstacle, Path, Closed, Solution};
 
     std::vector<std::vector<status>> readMap(const std::string& filename);
 
@@ -20,6 +20,8 @@ namespace map_utils
     std::string statusToString(const status& current_state);
     
     std::vector<int> getCoordinates(const std::vector<std::vector<status>>& map, const status& state);
+
+    void printPath(std::vector<std::vector<int>>& path);
 
 }
 
