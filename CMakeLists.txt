@@ -9,6 +9,7 @@ set(MY_PROGRAM_REQUIRED_FILES
 )
 
 include_directories(include)
+
 # executable
 add_executable(a_star ${MY_PROGRAM_REQUIRED_FILES})
 
